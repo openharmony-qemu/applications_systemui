@@ -28,6 +28,21 @@ export class RuleController {
      * @param {callback} Data of the type to show the notification
      */
   getNotificationData(notificationItemData: NotificationItemData, callback): void {
+    // ANS already accepted this exact native screen-capture LocalLiveView.
+    // It has no HAP bundle whose application switch/slot can be queried.
+    // Keep its user visibility check in NotificationService unchanged, and
+    // keep a genuine system stop control available without a sound/banner.
+    if (notificationItemData.isNativeScreenCapture === true) {
+      notificationItemData.ruleData = {
+        isAllowBanner: false,
+        isAllowSound: false,
+        isAllowVibrationValues: false,
+        isAllowStatusBarShow: true,
+        isAllowNotificationListShow: true
+      };
+      callback(notificationItemData);
+      return;
+    }
     this.isAllowSendNotification(notificationItemData, (isSuccess) => {
       if (!isSuccess) {
         Log.showWarn(TAG, 'user is not allow this to send notification');

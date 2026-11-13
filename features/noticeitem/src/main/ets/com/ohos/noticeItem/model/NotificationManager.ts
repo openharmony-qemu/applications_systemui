@@ -34,6 +34,7 @@ export default class NotificationManager {
   static readonly TYPE_LONG: number = NtfMgr.ContentType.NOTIFICATION_CONTENT_LONG_TEXT;
   static readonly TYPE_MULTI: number = NtfMgr.ContentType.NOTIFICATION_CONTENT_MULTILINE;
   static readonly TYPE_PICTURE: number = NtfMgr.ContentType.NOTIFICATION_CONTENT_PICTURE;
+  static readonly TYPE_SYSTEM_LIVE: number = NtfMgr.ContentType.NOTIFICATION_CONTENT_SYSTEM_LIVE_VIEW;
   static notificationTemplateMap = new Map();
 
   static subscribeNotification(tag: string, subscriber, asyncCallback): void {

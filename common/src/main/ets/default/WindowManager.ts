@@ -59,14 +59,14 @@ export const WINDOW_Destroy = 'WindowDestroy';
 const TAG = "WindowManager";
 
 const SYSTEM_WINDOW_TYPE_MAP: { [key in WindowType]: Window.WindowType } = {
-  SystemUi_StatusBar: Window.WindowType.TYPE_STATUS_BAR,
-  SystemUi_NavigationBar: Window.WindowType.TYPE_NAVIGATION_BAR,
-  SystemUi_DropdownPanel: Window.WindowType.TYPE_PANEL,
+  SystemUi_StatusBar: Window.WindowType.TYPE_VOLUME_OVERLAY,
+  SystemUi_NavigationBar: Window.WindowType.TYPE_VOLUME_OVERLAY,
+  SystemUi_DropdownPanel: Window.WindowType.TYPE_VOLUME_OVERLAY,
   SystemUi_NotificationPanel: Window.WindowType.TYPE_VOLUME_OVERLAY,
   SystemUi_ControlPanel: Window.WindowType.TYPE_VOLUME_OVERLAY,
   SystemUi_VolumePanel: Window.WindowType.TYPE_VOLUME_OVERLAY,
   SystemUi_BannerNotice: Window.WindowType.TYPE_VOLUME_OVERLAY,
-  SystemUi_SplitBar: Window.WindowType.TYPE_DIVIDER,
+  SystemUi_SplitBar: Window.WindowType.TYPE_VOLUME_OVERLAY,
   SystemUi_PrivacyIndicator: Window.WindowType.TYPE_VOLUME_OVERLAY
 };
 
@@ -84,8 +84,8 @@ class WindowManager {
   async createWindow(context: ServiceExtensionContext, name: WindowType, rect: Rect, loadContent: string): Promise<Window.Window> {
     Log.showInfo(TAG, `createWindow name: ${name}, rect: ${JSON.stringify(rect)}, url: ${loadContent}`);
     let winHandle = await Window.create(context, name, SYSTEM_WINDOW_TYPE_MAP[name]);
-    await winHandle.moveTo(rect.left, rect.top);
-    await winHandle.resetSize(rect.width, rect.height);
+    await winHandle.moveTo(Math.round(rect.left || 0), Math.round(rect.top || 0));
+    await winHandle.resetSize(Math.max(1, Math.round(rect.width || 1)), Math.max(1, Math.round(rect.height || 1)));
     await winHandle.loadContent(loadContent);
     this.mWindowInfos.set(name, { visibility: false, rect });
     Log.showInfo(TAG, `create window[${name}] success.`);
@@ -94,8 +94,10 @@ class WindowManager {
 
   async resetSizeWindow(name: WindowType, rect: Rect): Promise<void> {
     let window = await Window.find(name);
-    await window.moveTo(rect.left, rect.top);
-    await window.resetSize(rect.width, rect.height);
+    await window.moveTo(Math.round(rect.left || 0), Math.round(rect.top || 0));
+    if (Math.round(rect.width || 0) > 0 && Math.round(rect.height || 0) > 0) {
+      await window.resetSize(Math.round(rect.width), Math.round(rect.height));
+    }
     this.mWindowInfos.set(name, { ...(this.mWindowInfos.get(name) ?? DEFAULT_WINDOW_INFO), rect });
     EventManager.publish(
     obtainLocalEvent(WINDOW_RESIZE_EVENT, {
@@ -109,12 +111,14 @@ class WindowManager {
   async moveTo(name: WindowType, rect: Rect): Promise<void> {
     Log.showInfo(TAG, `moveTo window[${name}] success, rect: ${JSON.stringify(rect)}.`);
     let window = await Window.find(name);
-    await window.moveTo(rect.left, rect.top);
+    await window.moveTo(Math.round(rect.left || 0), Math.round(rect.top || 0));
   }
 
   async showWindow(name: WindowType): Promise<void> {
     let window = await Window.find(name);
-    await window.show();
+    if (name !== WindowType.PRIVACY_INDICATOR && name !== WindowType.NAVIGATION_BAR) {
+      await window.show();
+    }
     this.mWindowInfos.set(name, { ...(this.mWindowInfos.get(name) ?? DEFAULT_WINDOW_INFO), visibility: true });
     EventManager.publish(
     obtainLocalEvent(WINDOW_SHOW_HIDE_EVENT, {

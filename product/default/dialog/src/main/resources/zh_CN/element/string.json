@@ -3,6 +3,10 @@
     {
       "name": "mainability_description",
       "value": "System-Dialog ServiceExtensionAbility"
-    }
+    },
+    { "name": "playback_consent579_title", "value": "是否允许捕获播放音频？" },
+    { "name": "playback_consent579_message", "value": "此应用将捕获设备正在播放的声音。此选择不会授予麦克风权限。" },
+    { "name": "playback_consent579_deny", "value": "取消" },
+    { "name": "playback_consent579_allow", "value": "允许" }
   ]
 }

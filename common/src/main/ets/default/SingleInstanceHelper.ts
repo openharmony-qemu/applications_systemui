@@ -17,14 +17,15 @@ import Log from './Log';
 import audio from '@ohos.multimedia.audio';
 
 const TAG = 'SingleInstanceHelper';
-const AUDIO_MANAGER_KEY = 'MultiMediaAudioManager';
+const AUDIO_MANAGER_KEY = '__systemui_source__MultiMediaAudioManager';
 
 export default function createOrGet<T>(objectClass: { new(): T }, storageKey: string): T {
-  if (!globalThis[storageKey]) {
-    globalThis[storageKey] = new objectClass();
+  const realKey = '__systemui_source__' + storageKey;
+  if (!globalThis[realKey]) {
+    globalThis[realKey] = new objectClass();
     Log.showInfo(TAG, `Create key of ${storageKey}`);
   }
-  return globalThis[storageKey];
+  return globalThis[realKey];
 }
 
 export function getAudioManager() {

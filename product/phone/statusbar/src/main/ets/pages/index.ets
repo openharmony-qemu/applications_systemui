@@ -95,6 +95,7 @@ struct Index {
     }
     .width('100%')
     .height('100%')
+    .id('systemui-statusbar-swipe')
     .constraintSize({ minHeight: this.StatusMinH })
     .onAreaChange((e, e2) => {
       Log.showInfo(TAG, `onAreaChange, e: ${JSON.stringify(e)} e2: ${JSON.stringify(e2)}`);

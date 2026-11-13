@@ -15,6 +15,7 @@
 
 import Constants, {NotificationLayout as Layout} from '../../common/constants';
 import GeneralItem from './generalItem';
+import SystemLiveViewItem from './systemLiveViewItem';
 import CustomItem from './customItem';
 import Log from '../../../../../../../../../../common/src/main/ets/default/Log';
 import NotificationViewModel from '../../viewmodel/NotificationViewModel';
@@ -111,7 +112,9 @@ struct FrontItem {
 
   build() {
     Column() {
-      if (this.itemData.template?.name) {
+      if (this.itemData.systemLiveView) {
+        SystemLiveViewItem({ itemData: this.itemData })
+      } else if (this.itemData.template?.name) {
         CustomItem({ customItemData: this.itemData, clickAction: (): void => this.showDevicesDialog(), isSubItem: this.isSubItem })
       } else {
         GeneralItem({ itemData: this.itemData, clickAction: (): void => this.showDevicesDialog(), isSubItem: this.isSubItem })

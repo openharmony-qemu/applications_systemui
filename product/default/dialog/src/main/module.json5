@@ -16,7 +16,18 @@
     "installationFree": false,
     "uiSyntax": "ets",
     "pages": "$profile:main_pages",
+    "requestPermissions": [
+      { "name": "ohos.permission.MANAGE_AUDIO_CONFIG" },
+      { "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED" },
+      { "name": "ohos.permission.SYSTEM_FLOAT_WINDOW" }
+    ],
     "extensionAbilities": [
+      {
+        "name": "PlaybackCaptureConsentExtension",
+        "srcEntrance": "./ets/ServiceExtAbility/PlaybackCaptureConsentExtension.ets",
+        "type": "sys/commonUI",
+        "exported": false
+      },
       {
         "exported": true,
         "srcEntrance": "./ets/ServiceExtAbility/ExtAbility.ts",

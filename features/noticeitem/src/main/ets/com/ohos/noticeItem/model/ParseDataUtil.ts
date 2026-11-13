@@ -15,6 +15,7 @@
  */
 
 import Notification from '@ohos.notification';
+import notificationManager from '@ohos.notificationManager';
 import BundleMgr from "@ohos.bundle.bundleManager";
 import AccountManager from '@ohos.account.osAccount';
 import Log from '../../../../../../../../../common/src/main/ets/default/Log';
@@ -38,7 +39,8 @@ type NotificationContent = {
   expandedTitle?: string,
   longText?: string,
   lines?: [],
-  picture?: any
+  picture?: any,
+  systemLiveView?: notificationManager.NotificationSystemLiveViewContent
 }
 
 async function getUserId(uid): Promise<any> {
@@ -57,7 +59,18 @@ export default class ParseDataUtil {
     }
     Log.showInfo(TAG, `parse data start, want = ${JSON.stringify(request.wantAgent)} actionButtons = ${JSON.stringify(request.actionButtons)}`);
     let userId = await getUserId(request.creatorUid);
-    let appMessage = await ParseDataUtil.getAppData(request.creatorBundleName, userId);
+    // This is the native screen-capture service identity delivered by ANS,
+    // not an application impersonated by its label or notification title.
+    // ANS exposes the native owner through agentBundle, not an ownerUid field.
+    const isNativeScreenCapture = request.content?.contentType === NotificationManager.TYPE_SYSTEM_LIVE &&
+      request.content.systemLiveView?.typeCode === 1 && request.creatorUid === 1013 &&
+      request.agentBundle?.uid === 1013 && request.agentBundle?.bundle === '' &&
+      request.slotType === notificationManager.SlotType.LIVE_VIEW && request.isOngoing === true &&
+      request.isUnremovable === true;
+    let appMessage = isNativeScreenCapture ? {
+      appName: request.content.systemLiveView.title,
+      icon: request.smallIcon
+    } : await ParseDataUtil.getAppData(request.creatorBundleName, userId);
     let notificationItem: NotificationItemData = {
       id: request.id,
       userId: userId,
@@ -82,9 +95,11 @@ export default class ParseDataUtil {
       isRemoveAllowed: request.isRemoveAllowed,
       distributedOption: request.distributedOption,
       deviceId: request.deviceId,
-      groupName: request.groupName??request.hashcode,
+      groupName: isNativeScreenCapture ? request.hashCode : (request.groupName??request.hashcode),
       smallIcon: NotificationConfig.USE_NOTIFICATION_ICON ? (request?.smallIcon ?? appMessage.icon) : appMessage.icon,
-      tapDismissed: request.tapDismissed
+      tapDismissed: request.tapDismissed,
+      isNativeScreenCapture: isNativeScreenCapture,
+      systemLiveViewBundle: request.agentBundle ?? { bundle: request.creatorBundleName, uid: request.creatorUid }
     };
     notificationItem = {
       ...notificationItem, ...ParseDataUtil.getContentByType(request?.content?.contentType, request)
@@ -163,6 +178,10 @@ export default class ParseDataUtil {
     case NotificationManager.TYPE_PICTURE:
       getContentByKey([['title', ''], ['text', ''], ['additionalText', []], ['briefText', ''],
         ['expandedTitle', ''], ['picture', '']], request.content.picture);
+      break;
+    case NotificationManager.TYPE_SYSTEM_LIVE:
+      getContentByKey([['title', ''], ['text', ''], ['additionalText', '']], request.content.systemLiveView);
+      content['systemLiveView'] = request.content.systemLiveView;
       break;
     default:
       Log.showInfo(TAG, 'no match content type');

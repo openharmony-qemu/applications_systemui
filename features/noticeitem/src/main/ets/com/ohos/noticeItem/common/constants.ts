@@ -122,6 +122,9 @@ export interface NotificationItemData {
   deviceId?: string;
   groupName?: string;
   tapDismissed?: boolean;
+  systemLiveView?: notificationManager.NotificationSystemLiveViewContent;
+  systemLiveViewBundle?: notificationManager.BundleOption;
+  isNativeScreenCapture?: boolean;
 }
 
 export interface NotificationServiceListener {

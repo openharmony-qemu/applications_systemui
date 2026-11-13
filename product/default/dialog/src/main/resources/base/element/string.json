@@ -3,6 +3,10 @@
     {
       "name": "mainability_description",
       "value": "System-Dialog ServiceExtensionAbility"
-    }
+    },
+    { "name": "playback_consent579_title", "value": "Capture played audio?" },
+    { "name": "playback_consent579_message", "value": "This app will capture audio playing on this device. Microphone permission is not granted by this choice." },
+    { "name": "playback_consent579_deny", "value": "Cancel" },
+    { "name": "playback_consent579_allow", "value": "Allow" }
   ]
 }

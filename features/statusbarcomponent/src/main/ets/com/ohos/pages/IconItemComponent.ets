@@ -92,6 +92,7 @@ export default struct IconItemComponent {
       .height(this.style.stackHeight)
       .borderRadius(this.style.stackBorderRadius)
       .backgroundColor(this.mItemStatus.selected ? this.style.stackBgColorSelected : this.style.stackBgColorUnSelected)
+      .id('systemui-statusbar-' + (this.mItemData.relationWindowId ?? this.keyId))
       .onClick(this.onIconItemClick.bind(this))
       .gesture(LongPressGesture({ repeat: false }).onAction(this.onIconItemLongPressGesture.bind(this)))
       .onTouch(this.onIconItemTouch.bind(this))

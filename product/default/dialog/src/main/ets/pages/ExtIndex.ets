@@ -14,7 +14,7 @@
  */
 
 import rpc from '@ohos.rpc';
-import Log from '../../../../../../../common/src/main/ets/default/Log';
+import Log from '../common/Log';
 import Constants from '../common/Constants';
 import type { IDialogParameters } from '../controller/Controller';
 import inputMethod from '@ohos.inputMethod';

@@ -15,7 +15,7 @@
 
 import window from '@ohos.window';
 import rpc from '@ohos.rpc';
-import Log from '../../../../../../../common/src/main/ets/default/Log';
+import Log from '../common/Log';
 
 const TAG = 'Dialog-ServiceExtensionAbility';
 
